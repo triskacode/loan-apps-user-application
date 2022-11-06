@@ -1,24 +1,24 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseInterceptors,
+  Get,
+  Param,
+  Patch,
+  Post,
   UseFilters,
+  UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
+import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
-import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
+import { UserService } from './user.service';
 
 @Controller('user')
 @UseInterceptors(TransformResponseInterceptor)
 @UseFilters(HttpExceptionFilter)
-export class UserController {
+export class UserHttpController {
   constructor(private readonly userService: UserService) {}
 
   @Post()

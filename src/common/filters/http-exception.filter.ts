@@ -25,7 +25,7 @@ export class HttpExceptionFilter<T extends Error> implements ExceptionFilter {
 
             prev[error.property] = errorMessage;
             return prev;
-          }, {}) ?? null;
+          }, {}) ?? exception.message;
 
         message = 'Bad Request';
         errors = customErrors;
@@ -51,7 +51,7 @@ export class HttpExceptionFilter<T extends Error> implements ExceptionFilter {
       .json({
         message,
         errors,
-        data: {},
+        data: null,
       });
   }
 }
