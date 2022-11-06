@@ -8,20 +8,20 @@ import {
 import { UserRole, UserState } from '../user.types';
 
 export class CreateUserDto {
-  @IsNotEmpty()
-  @IsString()
   @IsEmail()
+  @IsString()
+  @IsNotEmpty()
   email: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   password: string;
 
-  @IsOptional()
   @IsEnum(UserRole)
+  @IsOptional()
   role: UserRole;
 
-  @IsOptional()
   @IsEnum(UserState)
+  @IsOptional()
   state: UserState;
 }

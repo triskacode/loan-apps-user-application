@@ -6,12 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UseFilters,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
+import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 
 @Controller('user')
+@UseInterceptors(TransformResponseInterceptor)
+@UseFilters(HttpExceptionFilter)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

@@ -16,6 +16,7 @@ import { UserModule } from './modules/user/user.module';
         database: configService.get('database.name'),
         autoLoadEntities: true,
         synchronize: true,
+        logging: true,
         logger: 'advanced-console',
       }),
     }),
