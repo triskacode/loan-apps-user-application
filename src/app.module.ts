@@ -6,6 +6,8 @@ import { DatabaseConfig } from './config/database.config';
 import { MicroserviceConfig } from './config/microservice.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { AuthGuard } from './common/guards/auth.guard';
 
 @Module({
   imports: [
@@ -25,8 +27,9 @@ import { UserModule } from './modules/user/user.module';
       }),
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [AuthGuard],
 })
 export class AppModule {}

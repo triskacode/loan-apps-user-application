@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Catch,
   ExceptionFilter,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   NotFoundException,
@@ -37,10 +38,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
         errors = exception.message !== 'Not Found' ? exception.message : null;
         break;
       case UnauthorizedException:
-        console.log(exception);
         message = 'Unauthorized';
         errors =
           exception.message !== 'Unauthorized' ? exception.message : null;
+        break;
+      case ForbiddenException:
+        message = 'Forbidden';
+        errors = exception.message !== 'Forbidden' ? exception.message : null;
         break;
       default:
         message = 'Internal Server Error';
