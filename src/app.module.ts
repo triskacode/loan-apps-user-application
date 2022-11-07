@@ -8,6 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AuthGuard } from './common/guards/auth.guard';
+import { DataSource } from 'typeorm';
+import { runSeeder } from 'typeorm-extension';
+import UserSeeder from './database/seeders/user.seeder';
 
 @Module({
   imports: [
@@ -25,6 +28,14 @@ import { AuthGuard } from './common/guards/auth.guard';
         logging: true,
         logger: 'advanced-console',
       }),
+      dataSourceFactory: async (options) => {
+        const dataSource = new DataSource(options);
+
+        await dataSource.initialize();
+        await runSeeder(dataSource, UserSeeder);
+
+        return dataSource;
+      },
     }),
     UserModule,
     AuthModule,

@@ -33,7 +33,7 @@ export class UserHttpController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.USER)
+  @Roles(UserRole.MANAGER)
   @UseGuards(AuthGuard, RolesGuard)
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.userService.update(+id, dto);
