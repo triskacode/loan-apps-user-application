@@ -18,7 +18,7 @@ export class User {
   @Index()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({ enum: UserRole, default: UserRole.USER })

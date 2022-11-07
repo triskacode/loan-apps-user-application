@@ -19,14 +19,6 @@ export class UserService {
     return this.userRepository.create(entity);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userRepository.findAll();
-  }
-
-  async findById(id: number): Promise<User> {
-    return this.userRepository.findById(id);
-  }
-
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const entity = await this.userRepository.findById(id);
 
@@ -41,5 +33,17 @@ export class UserService {
     if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
 
     return this.userRepository.delete(entity);
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.userRepository.findAll();
+  }
+
+  async findById(id: number): Promise<User> {
+    return this.userRepository.findById(id);
+  }
+
+  async findByEmailWithPassword(email: string): Promise<User> {
+    return this.userRepository.findByEmailWithPassword(email);
   }
 }

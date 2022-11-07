@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 @Catch()
@@ -25,20 +26,29 @@ export class HttpExceptionFilter<T extends Error> implements ExceptionFilter {
 
             prev[error.property] = errorMessage;
             return prev;
-          }, {}) ?? exception.message;
+          }, {}) ??
+          (exception.message !== 'Bad Request' ? exception.message : null);
 
         message = 'Bad Request';
         errors = customErrors;
         break;
       case NotFoundException:
         message = 'Not Found';
-        errors = exception.message;
+        errors = exception.message !== 'Not Found' ? exception.message : null;
+        break;
+      case UnauthorizedException:
+        console.log(exception);
+        message = 'Unauthorized';
+        errors =
+          exception.message !== 'Unauthorized' ? exception.message : null;
         break;
       default:
         message = 'Internal Server Error';
         errors =
           exception instanceof HttpException
-            ? exception.message
+            ? exception.message !== 'Internal Server Error'
+              ? exception.message
+              : null
             : 'Whoops, something went wrong';
     }
 
