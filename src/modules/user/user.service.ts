@@ -40,7 +40,11 @@ export class UserService {
   }
 
   async findById(id: number): Promise<User> {
-    return this.userRepository.findById(id);
+    const entity = await this.userRepository.findById(id);
+
+    if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
+
+    return entity;
   }
 
   async findByEmailWithPassword(email: string): Promise<User> {

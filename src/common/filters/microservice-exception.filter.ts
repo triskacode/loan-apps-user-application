@@ -1,20 +1,16 @@
 import {
-  ArgumentsHost,
-  BadRequestException,
   Catch,
-  ExceptionFilter,
+  RpcExceptionFilter,
   HttpException,
-  HttpStatus,
-  NotFoundException,
   UnauthorizedException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
+import { Observable, throwError } from 'rxjs';
 
 @Catch()
-export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: Error, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse();
-
+export class MicroservcieExceptionFilter implements RpcExceptionFilter {
+  catch(exception: Error): Observable<any> {
     let errors: string;
     let message: string;
 
@@ -37,7 +33,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         errors = exception.message !== 'Not Found' ? exception.message : null;
         break;
       case UnauthorizedException:
-        console.log(exception);
         message = 'Unauthorized';
         errors =
           exception.message !== 'Unauthorized' ? exception.message : null;
@@ -52,17 +47,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
             : 'Whoops, something went wrong';
     }
 
-    response
-      .status(
-        exception instanceof HttpException
-          ? exception.getStatus()
-          : HttpStatus.INTERNAL_SERVER_ERROR,
-      )
-      .json({
-        code: (exception as any).getStatus() ?? 500,
-        message,
-        errors,
-        data: null,
-      });
+    return throwError(() => ({
+      code: (exception as any).getStatus() ?? 500,
+      message,
+      errors,
+      data: null,
+    }));
   }
 }
