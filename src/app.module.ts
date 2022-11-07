@@ -10,7 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AuthGuard } from './common/guards/auth.guard';
 import { DataSource } from 'typeorm';
 import { runSeeder } from 'typeorm-extension';
-import UserSeeder from './database/seeders/user.seeder';
+import { UserSeeder } from './database/seeders/user.seeder';
 
 @Module({
   imports: [

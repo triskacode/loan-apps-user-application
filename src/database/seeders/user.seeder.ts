@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { User } from 'src/modules/user/entities/user.entity';
 import { UserRole } from 'src/modules/user/user.types';
 
-export default class UserSeeder implements Seeder {
+export class UserSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
     const repository = dataSource.getRepository(User);
 
