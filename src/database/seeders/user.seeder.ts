@@ -1,7 +1,7 @@
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { User } from 'src/modules/user/entities/user.entity';
-import { UserRole } from 'src/modules/user/user.types';
+import { UserRole, UserState } from 'src/modules/user/user.types';
 
 export class UserSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
@@ -13,6 +13,7 @@ export class UserSeeder implements Seeder {
     manager.email = 'manager@mail.com';
     manager.password = 'password';
     manager.role = UserRole.MANAGER;
+    manager.state = UserState.ACTIVE;
 
     manager.hashPassword();
     repository.save(manager);
@@ -23,6 +24,7 @@ export class UserSeeder implements Seeder {
     user.email = 'user@mail.com';
     user.password = 'password';
     user.role = UserRole.USER;
+    user.state = UserState.ACTIVE;
 
     user.hashPassword();
     repository.save(user);
