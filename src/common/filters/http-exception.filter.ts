@@ -63,7 +63,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
           : HttpStatus.INTERNAL_SERVER_ERROR,
       )
       .json({
-        code: (exception as any).getStatus() ?? 500,
+        code:
+          exception instanceof HttpException
+            ? exception.getStatus()
+            : HttpStatus.INTERNAL_SERVER_ERROR,
         message,
         errors,
         data: null,

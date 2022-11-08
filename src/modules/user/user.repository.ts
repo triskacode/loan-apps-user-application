@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -9,23 +8,37 @@ export class UserRepository {
   constructor(@InjectRepository(User) private repository: Repository<User>) {}
 
   async create(entity: User): Promise<User> {
-    if (entity.password) entity.hashPassword();
+    try {
+      if (entity.password) entity.hashPassword();
 
-    const newEntity = await this.repository.save(entity);
-    delete newEntity.password;
+      const newEntity = await this.repository.save(entity);
+      delete newEntity.password;
 
-    return newEntity;
+      return newEntity;
+    } catch (err) {
+      if (err.code === 'SQLITE_CONSTRAINT_UNIQUE')
+        throw new BadRequestException('User already exists');
+
+      throw err;
+    }
   }
 
-  async update(entity: User, updateSet: UpdateUserDto): Promise<User> {
-    const mergedEntity = this.repository.merge(entity, updateSet);
+  async update(entity: User, updateSet: Partial<User>): Promise<User> {
+    try {
+      const mergedEntity = this.repository.merge(entity, updateSet);
 
-    if (updateSet.password) mergedEntity.hashPassword();
+      if (updateSet.password) mergedEntity.hashPassword();
 
-    const newEntity = await this.repository.save(mergedEntity);
-    delete newEntity.password;
+      const newEntity = await this.repository.save(mergedEntity);
+      delete newEntity.password;
 
-    return newEntity;
+      return newEntity;
+    } catch (err) {
+      if (err.code === 'SQLITE_CONSTRAINT_UNIQUE')
+        throw new BadRequestException('User already exists');
+
+      throw err;
+    }
   }
 
   async delete(entity: User): Promise<User> {

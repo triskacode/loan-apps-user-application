@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UserRole, UserState } from '../user.types';
+import { UserRole } from '../user.types';
 
 export class CreateUserDto {
   @IsEmail()
@@ -20,8 +20,4 @@ export class CreateUserDto {
   @IsEnum(UserRole)
   @IsOptional()
   role: UserRole;
-
-  @IsEnum(UserState)
-  @IsOptional()
-  state: UserState;
 }

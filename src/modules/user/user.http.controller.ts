@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -17,6 +18,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ParamIdDto } from './dto/param-id.dto';
+import { QueryDeleteUserDto } from './dto/query-delete-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { UserRole } from './user.types';
@@ -41,11 +43,25 @@ export class UserHttpController {
     return this.userService.update(param.id, dto);
   }
 
+  @Post(':id/activate')
+  @Roles(UserRole.MANAGER)
+  @UseGuards(AuthGuard, RolesGuard)
+  activate(@Param() param: ParamIdDto) {
+    return this.userService.activate(param.id);
+  }
+
+  @Post(':id/suspend')
+  @Roles(UserRole.MANAGER)
+  @UseGuards(AuthGuard, RolesGuard)
+  suspend(@Param() param: ParamIdDto) {
+    return this.userService.suspend(param.id);
+  }
+
   @Delete(':id')
   @Roles(UserRole.MANAGER)
   @UseGuards(AuthGuard, RolesGuard)
-  remove(@Param() param: ParamIdDto) {
-    return this.userService.remove(param.id);
+  delete(@Param() param: ParamIdDto, @Query() query: QueryDeleteUserDto) {
+    return this.userService.delete(param.id, query.force ?? false);
   }
 
   @Get()
