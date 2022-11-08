@@ -16,6 +16,7 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ParamIdDto } from './dto/param-id.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { UserRole } from './user.types';
@@ -27,7 +28,8 @@ export class UserHttpController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @Roles(UserRole.MANAGER)
+  @UseGuards(AuthGuard, RolesGuard)
   create(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
   }
@@ -35,25 +37,28 @@ export class UserHttpController {
   @Patch(':id')
   @Roles(UserRole.MANAGER)
   @UseGuards(AuthGuard, RolesGuard)
-  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.userService.update(+id, dto);
+  update(@Param() param: ParamIdDto, @Body() dto: UpdateUserDto) {
+    return this.userService.update(param.id, dto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Roles(UserRole.MANAGER)
+  @UseGuards(AuthGuard, RolesGuard)
+  remove(@Param() param: ParamIdDto) {
+    return this.userService.remove(param.id);
   }
 
   @Get()
-  @UseGuards(AuthGuard)
+  @Roles(UserRole.MANAGER)
+  @UseGuards(AuthGuard, RolesGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
-  findById(@Param('id') id: string) {
-    return this.userService.findById(+id);
+  @Roles(UserRole.MANAGER)
+  @UseGuards(AuthGuard, RolesGuard)
+  findById(@Param() param: ParamIdDto) {
+    return this.userService.findById(param.id);
   }
 }
