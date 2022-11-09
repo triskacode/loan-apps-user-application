@@ -44,13 +44,26 @@ export class UserService {
     return this.userRepository.update(entity, { state: UserState.SUSPENDED });
   }
 
-  async delete(id: number, force: boolean): Promise<User> {
+  async softDelete(id: number): Promise<User> {
     const entity = await this.userRepository.findById(id);
 
     if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
 
-    if (!force)
-      return this.userRepository.update(entity, { state: UserState.DELETED });
+    return this.userRepository.update(entity, { state: UserState.DELETED });
+  }
+
+  async restore(id: number): Promise<User> {
+    const entity = await this.userRepository.findById(id);
+
+    if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
+
+    return this.userRepository.update(entity, { state: UserState.CREATED });
+  }
+
+  async delete(id: number): Promise<User> {
+    const entity = await this.userRepository.findById(id);
+
+    if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
 
     return this.userRepository.delete(entity);
   }

@@ -18,10 +18,10 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ParamIdDto } from './dto/param-id.dto';
-import { QueryDeleteUserDto } from './dto/query-delete-user.dto';
+import { QueryUpdateUserDto } from './dto/query-update-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { UserRole } from './user.types';
+import { UpdateUserCMD, UserRole } from './user.types';
 
 @Controller('user')
 @UseInterceptors(TransformResponseInterceptor)
@@ -39,29 +39,34 @@ export class UserHttpController {
   @Patch(':id')
   @Roles(UserRole.MANAGER)
   @UseGuards(AuthGuard, RolesGuard)
-  update(@Param() param: ParamIdDto, @Body() dto: UpdateUserDto) {
+  update(
+    @Param() param: ParamIdDto,
+    @Body() dto: UpdateUserDto,
+    @Query() query: QueryUpdateUserDto,
+  ) {
+    if (query.cmd) {
+      switch (query.cmd) {
+        case UpdateUserCMD.UPDATE:
+          return this.userService.update(param.id, dto);
+        case UpdateUserCMD.ACTIVATE:
+          return this.userService.activate(param.id);
+        case UpdateUserCMD.SUSPEND:
+          return this.userService.suspend(param.id);
+        case UpdateUserCMD.SOFT_DELETE:
+          return this.userService.softDelete(param.id);
+        case UpdateUserCMD.RESTORE:
+          return this.userService.restore(param.id);
+      }
+    }
+
     return this.userService.update(param.id, dto);
-  }
-
-  @Post(':id/activate')
-  @Roles(UserRole.MANAGER)
-  @UseGuards(AuthGuard, RolesGuard)
-  activate(@Param() param: ParamIdDto) {
-    return this.userService.activate(param.id);
-  }
-
-  @Post(':id/suspend')
-  @Roles(UserRole.MANAGER)
-  @UseGuards(AuthGuard, RolesGuard)
-  suspend(@Param() param: ParamIdDto) {
-    return this.userService.suspend(param.id);
   }
 
   @Delete(':id')
   @Roles(UserRole.MANAGER)
   @UseGuards(AuthGuard, RolesGuard)
-  delete(@Param() param: ParamIdDto, @Query() query: QueryDeleteUserDto) {
-    return this.userService.delete(param.id, query.force ?? false);
+  delete(@Param() param: ParamIdDto) {
+    return this.userService.delete(param.id);
   }
 
   @Get()
