@@ -17,16 +17,5 @@ export class UserSeeder implements Seeder {
 
     manager.hashPassword();
     repository.save(manager);
-
-    const user = new User();
-
-    user.id = 2;
-    user.email = 'user@mail.com';
-    user.password = 'password';
-    user.role = UserRole.USER;
-    user.state = UserState.ACTIVE;
-
-    user.hashPassword();
-    repository.save(user);
   }
 }
