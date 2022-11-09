@@ -12,7 +12,6 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      skipMissingProperties: true,
       exceptionFactory: (errors) => new BadRequestException(errors),
     }),
   );

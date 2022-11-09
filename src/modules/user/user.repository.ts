@@ -25,11 +25,14 @@ export class UserRepository {
 
   async update(entity: User, updateSet: Partial<User>): Promise<User> {
     try {
-      const mergedEntity = this.repository.merge(entity, updateSet);
+      entity.email = updateSet.email ?? entity.email;
+      entity.password = updateSet.password ?? entity.password;
+      entity.role = updateSet.role ?? entity.role;
+      entity.state = updateSet.state ?? entity.state;
 
-      if (updateSet.password) mergedEntity.hashPassword();
+      if (updateSet.password) entity.hashPassword();
 
-      const newEntity = await this.repository.save(mergedEntity);
+      const newEntity = await this.repository.save(entity);
       delete newEntity.password;
 
       return newEntity;

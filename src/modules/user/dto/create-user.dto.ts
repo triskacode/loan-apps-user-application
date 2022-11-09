@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
@@ -19,5 +20,8 @@ export class CreateUserDto {
 
   @IsEnum(UserRole)
   @IsOptional()
-  role: UserRole;
+  @Transform(({ value }) =>
+    value !== null && value !== undefined && value !== '' ? value : undefined,
+  )
+  role?: UserRole;
 }
