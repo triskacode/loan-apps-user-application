@@ -12,26 +12,26 @@ import { UserRole, UserState } from '../user.types';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
   @Column({ unique: true })
   @Index()
-  email: string;
+  email!: string;
 
   @Column({ select: false })
-  password: string;
+  password!: string;
 
   @Column({ enum: UserRole, default: UserRole.USER })
-  role?: UserRole;
+  role: UserRole;
 
   @Column({ enum: UserState, default: UserState.CREATED })
-  state?: UserState;
+  state: UserState;
 
   @CreateDateColumn()
-  created_at?: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updated_at?: Date;
+  updated_at: Date;
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 10);

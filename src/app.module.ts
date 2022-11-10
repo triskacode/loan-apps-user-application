@@ -7,10 +7,10 @@ import { MicroserviceConfig } from './config/microservice.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { AuthGuard } from './common/guards/auth.guard';
 import { DataSource } from 'typeorm';
 import { runSeeder } from 'typeorm-extension';
 import { UserSeeder } from './database/seeders/user.seeder';
+import { AccountModule } from './modules/account/account.module';
 
 @Module({
   imports: [
@@ -39,8 +39,9 @@ import { UserSeeder } from './database/seeders/user.seeder';
     }),
     UserModule,
     AuthModule,
+    AccountModule,
   ],
   controllers: [AppController],
-  providers: [AuthGuard],
+  providers: [],
 })
 export class AppModule {}

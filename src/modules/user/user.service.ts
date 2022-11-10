@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { AccountService } from '../account/account.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -7,7 +8,10 @@ import { UserState } from './user.types';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private accountService: AccountService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const entity = new User();
@@ -33,7 +37,12 @@ export class UserService {
 
     if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
 
-    return this.userRepository.update(entity, { state: UserState.ACTIVE });
+    const result = await this.userRepository.update(entity, {
+      state: UserState.ACTIVE,
+    });
+    this.accountService.emitUserActivated(result);
+
+    return result;
   }
 
   async suspend(id: number): Promise<User> {
@@ -65,7 +74,10 @@ export class UserService {
 
     if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
 
-    return this.userRepository.delete(entity);
+    const result = await this.userRepository.delete(entity);
+    this.accountService.emitUserDeleted(result);
+
+    return result;
   }
 
   async findAll(): Promise<User[]> {
