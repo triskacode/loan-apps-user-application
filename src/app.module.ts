@@ -11,6 +11,7 @@ import { DataSource } from 'typeorm';
 import { runSeeder } from 'typeorm-extension';
 import { UserSeeder } from './database/seeders/user.seeder';
 import { AccountModule } from './modules/account/account.module';
+import { LoanModule } from './modules/loan/loan.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { AccountModule } from './modules/account/account.module';
     UserModule,
     AuthModule,
     AccountModule,
+    LoanModule,
   ],
   controllers: [AppController],
   providers: [],

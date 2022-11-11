@@ -1,6 +1,6 @@
 import { UserRole, UserState } from 'src/modules/user/user.types';
 
-export class EmitUserActivatedDto {
+export class EmitUserUpdatedDto {
   id: number;
   email: string;
   role: UserRole;

@@ -9,4 +9,8 @@ export const MicroserviceConfig = registerAs('microservice', () => ({
     host: process.env.ACCOUNT_SERVICE_HOST,
     port: process.env.ACCOUNT_SERVICE_PORT,
   },
+  loan: {
+    host: process.env.LOAN_SERVICE_HOST,
+    port: process.env.LOAN_SERVICE_PORT,
+  },
 }));

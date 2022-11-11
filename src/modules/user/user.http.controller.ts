@@ -17,11 +17,11 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FilterFindAllUserDto } from './dto/filter-find-all-user.dto';
 import { ParamIdDto } from './dto/param-id.dto';
-import { QueryUpdateUserDto } from './dto/query-update-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { UpdateUserCMD, UserRole } from './user.types';
+import { UserRole } from './user.types';
 
 @Controller('user')
 @UseInterceptors(TransformResponseInterceptor)
@@ -42,24 +42,21 @@ export class UserHttpController {
   update(
     @Param() param: ParamIdDto,
     @Body() dto: UpdateUserDto,
-    @Query() query: QueryUpdateUserDto,
+    @Query('action')
+    action?: 'activate' | 'suspend' | 'soft-delete' | 'restore',
   ) {
-    if (query.cmd) {
-      switch (query.cmd) {
-        case UpdateUserCMD.UPDATE:
-          return this.userService.update(param.id, dto);
-        case UpdateUserCMD.ACTIVATE:
-          return this.userService.activate(param.id);
-        case UpdateUserCMD.SUSPEND:
-          return this.userService.suspend(param.id);
-        case UpdateUserCMD.SOFT_DELETE:
-          return this.userService.softDelete(param.id);
-        case UpdateUserCMD.RESTORE:
-          return this.userService.restore(param.id);
-      }
+    switch (action) {
+      case 'activate':
+        return this.userService.activate(param.id);
+      case 'suspend':
+        return this.userService.suspend(param.id);
+      case 'soft-delete':
+        return this.userService.softDelete(param.id);
+      case 'restore':
+        return this.userService.restore(param.id);
+      default:
+        return this.userService.update(param.id, dto);
     }
-
-    return this.userService.update(param.id, dto);
   }
 
   @Delete(':id')
@@ -72,8 +69,8 @@ export class UserHttpController {
   @Get()
   @Roles(UserRole.MANAGER)
   @UseGuards(AuthGuard, RolesGuard)
-  findAll() {
-    return this.userService.findAll();
+  findAll(@Query() filter: FilterFindAllUserDto) {
+    return this.userService.findAll(filter);
   }
 
   @Get(':id')

@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AccountService } from '../account/account.service';
+import { LoanService } from '../loan/loan.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FilterFindAllUserDto } from './dto/filter-find-all-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserRepository } from './user.repository';
@@ -11,6 +13,7 @@ export class UserService {
   constructor(
     private userRepository: UserRepository,
     private accountService: AccountService,
+    private loanService: LoanService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -29,7 +32,11 @@ export class UserService {
 
     if (!entity) throw new NotFoundException(`User with id: ${id} not found`);
 
-    return this.userRepository.update(entity, updateUserDto);
+    const result = await this.userRepository.update(entity, updateUserDto);
+    this.accountService.emitUserUpdated(result);
+    this.loanService.emitUserUpdated(result);
+
+    return result;
   }
 
   async activate(id: number): Promise<User> {
@@ -41,6 +48,7 @@ export class UserService {
       state: UserState.ACTIVE,
     });
     this.accountService.emitUserActivated(result);
+    this.loanService.emitUserActivated(result);
 
     return result;
   }
@@ -76,12 +84,13 @@ export class UserService {
 
     const result = await this.userRepository.delete(entity);
     this.accountService.emitUserDeleted(result);
+    this.loanService.emitUserDeleted(result);
 
     return result;
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userRepository.findAll();
+  async findAll(filter: FilterFindAllUserDto): Promise<User[]> {
+    return this.userRepository.findAll(filter);
   }
 
   async findById(id: number): Promise<User> {

@@ -50,11 +50,15 @@ export class UserRepository {
     return entity;
   }
 
-  async findAll(skip = 0 as number, take = 10 as number): Promise<User[]> {
+  async findAll(
+    query?: Partial<Pick<User, 'role' | 'state'>>,
+  ): Promise<User[]> {
     return this.repository
       .createQueryBuilder('user')
-      .skip(skip)
-      .take(take)
+      .where({
+        ...(query?.role !== undefined ? { role: query.role } : {}),
+        ...(query?.state !== undefined ? { state: query.state } : {}),
+      })
       .getMany();
   }
 
