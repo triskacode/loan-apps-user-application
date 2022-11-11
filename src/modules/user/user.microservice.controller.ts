@@ -2,6 +2,7 @@ import { Controller, UseFilters, UseInterceptors } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { MicroservcieExceptionFilter } from 'src/common/filters/microservice-exception.filter';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
+import { FilterFindAllUserDto } from './dto/filter-find-all-user.dto';
 import { FindUserByEmailDto } from './dto/find-user-by-email.dto';
 import { FindUserByIdDto } from './dto/find-user-by-id.dto';
 import { User } from './entities/user.entity';
@@ -21,5 +22,10 @@ export class UserMicroserviceController {
   @MessagePattern({ endpoint: 'user', cmd: 'find-by-id' })
   async findById(dto: FindUserByIdDto): Promise<User> {
     return this.userService.findById(dto.id);
+  }
+
+  @MessagePattern({ endpoint: 'user', cmd: 'find-all' })
+  findAll(filter: FilterFindAllUserDto) {
+    return this.userService.findAll(filter);
   }
 }
