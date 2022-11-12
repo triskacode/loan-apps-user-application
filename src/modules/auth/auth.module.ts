@@ -13,7 +13,7 @@ import { AuthService } from './auth.service';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: configService.get('microservice.auth.host'),
+            host: configService.get('microservice.account.host'),
             port: configService.get('microservice.auth.port'),
           },
         }),

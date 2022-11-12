@@ -24,10 +24,10 @@ import { LoanModule } from './modules/loan/loan.module';
       useFactory: (configService: ConfigService) => ({
         type: 'better-sqlite3',
         database: configService.get('database.name'),
+        logger: 'advanced-console',
         autoLoadEntities: true,
         synchronize: true,
-        logging: true,
-        logger: 'advanced-console',
+        logging: configService.get('app.env') === 'development' ? true : false,
       }),
       dataSourceFactory: async (options) => {
         const dataSource = new DataSource(options);
